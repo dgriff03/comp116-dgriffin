@@ -65,10 +65,14 @@ else
 	count = 1
 	File.open(log_file, 'r') do |f|
   		f.each_line do |line|
+  			ips = {}
   			current_attack = false
   			parsed = parser.parse(line)
   			if /\\x[0-9a-fA-f]{2}/.match(parsed['%r'])
   				attack = "Shellcode"
+				current_attack = true
+			elsif /Nmap Scripting Engine/.match(parsed["%{User-Agent}i"])
+				attack = "Nmap scan"
 				current_attack = true
   			elsif parsed['%>s'].to_i / 400 == 1
   				attack = "HTTP error"
