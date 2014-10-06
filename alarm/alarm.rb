@@ -1,13 +1,12 @@
 #!/usr/bin/env ruby
-require 'packetfu'
-
-
 
 if ARGV.length == 0
+	require 'packetfu'
+
 	pkt_array = PacketFu::Capture.new(:iface => 'en0', :start => true, :promisc => true)
 	caught = false
 
-	credit_card_regex = ['4\d{3}(\s|-)?\d{4}(\s|-)?\d{4}(\s|-)?\d{4}','5\d{3}(\s|-)?\d{4}(\s|-)?\d{4}(\s|-)?\d{4}','6011(\s|-)?\d{4}(\s|-)?\d{4}(\s|-)?\d{4}','3\d{3}(\s|-)?\d{6}(\s|-)?\d{5}']
+	credit_card_regex = ['4\d{3}(\s|-)?\d{4}(\s|-)?\d{4}(\s|-)?\d{4}','5\d{3}(\s|-)?\d{4}(\s|-)?\d{4}(\s|-)?\d{4}','6011(\s|-)?\d{4}(\s|-)?\d{4}(\s|-)?\d{4}','3\d{3}(\s|-)?\d{6}(\s|-)?\d{5}','\d{4}(\s|-)?\d{4}(\s|-)?\d{4}(\s|-)?\d{4}']
 
 	count = 1
 	current_attack = false
@@ -54,7 +53,34 @@ if ARGV.length == 0
 			end
 	 end
 else
+	require 'apachelogregex'
+	#%h -> client ip
+	#%t -> time
+	#%>s -> http status 
+
+
+	format = '%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\"'
+	parser = ApacheLogRegex.new(format)
 	log_file = ARGV.last
+	count = 1
+	File.open(log_file, 'r') do |f|
+  		f.each_line do |line|
+  			current_attack = false
+  			parsed = parser.parse(line)
+  			if /\\x[0-9a-fA-f]{2}/.match(parsed['%r'])
+  				attack = "Shellcode"
+				current_attack = true
+  			elsif parsed['%>s'].to_i / 400 == 1
+  				attack = "HTTP error"
+  				current_attack = true
+  			end
 
-
+  			if current_attack
+  				source = parsed["%h"]
+  				payload = parsed["%r"].gsub(/HTTP\/[0-9]\.[0-9]/,'')
+				puts "#{count}. ALERT: #{attack} is detected from #{source} (HTTP) (#{payload})!"
+				count += 1
+			end
+  		end
+  	end
 end
