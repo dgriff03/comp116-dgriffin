@@ -18,18 +18,24 @@ if ARGV.length == 0
 				pkt = PacketFu::Packet.parse(p)
 				protocol = pkt.proto()[-1]
 				source = pkt.ip_saddr
-				flags = pkt.tcp_flags
+				flags = nil
 				payload = pkt.payload().each_byte.map { |b| sprintf(" 0x%02X ",b) }.join
-				port = pkt.tcp_dst
+				if pkt.class == 'PacketFu::TCPPacket'
+					port = pkt.tcp_dst
+					flags = pkt.tcp_flags
+				elsif pkt.class == 'PacketFu::UDPPacket'
+					port = pkt.udp_dst
+				else
+					port = 0
+				end				
 			rescue
 				next
 			end
-
-			if flags.fin == 1 and flags.psh == 1 and flags.urg == 1
+			if flags and flags.fin == 1 and flags.psh == 1 and flags.urg == 1
 				current_attack = true
 				attack = "Xmas scan"
 			end
-			if flags.fin == 0 and flags.psh == 0 and flags.rst == 0 and flags.syn == 0 and flags.urg == 0 and flags.ack == 0
+			if flags and flags.fin == 0 and flags.psh == 0 and flags.rst == 0 and flags.syn == 0 and flags.urg == 0 and flags.ack == 0
 				current_attack = true
 				attack = "Null scan"
 			end
