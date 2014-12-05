@@ -1,0 +1,82 @@
+Dixon Minnick and Daniel Griffin
+Introduction to the Dark Arts Assignment 5
+
+Part 1: Image Analysis
+
+ When examining the 3 given image, the file with the hidden information was determined by performing:
+diff a.jpg b.jpg
+diff b.jpg c.jpg
+diff a.jpg c.jpg
+Differences were only found in the first two commands resulting in the assumption that a hidden file was contained in b.jpg. To extract the file steghide was used in a brute force attack using the wordlist passwords.lst which is the default wordlist of john the ripper. The brute force attack was performed with a python script which resulted in the password disney which resulted in the binary runme. The information below was discovered by running the strings command on runme.
+strcpy
+puts
+printf
+strcmp
+blinky_the_wonder_chimp
+Perhaps use your first name as an argument! :-)
+Please send me an email with the subject: I believe that I will win! you are goind a heckuvajob up to this point!
+
+
+Disk Analysis
+
+What is/are the disk format(s) of the disk on the suspect's computing device?
+
+There are 4 disk volumes, 2of which are unallocated. The first allocated volume is Win95 Fat32 (0x0c). The other is Linux (0x83).
+
+Is there a phone carrier involved?
+	
+	No
+
+What operating system, including version number, is being used? Please elaborate how you determined this information.
+
+	Kali Linux 1.0.9 -- Found in the file /etc/debian_version
+
+What applications are installed on the disk? Please elaborate how you determined this information.
+
+	Default Kali linux applications such as wireshark, emacs, vim, firebird, john, and mysql.
+
+Is there a root password? If so, what is it?
+
+	There was a root password. root:princess
+
+Are there any additional user accounts on the system? If so, what are their passwords?
+
+	stegani:iloveyou
+	judas:00000000
+
+
+List some of the incriminating evidence that you found. Please elaborate where and how you uncovered the evidence.
+
+	Several images were found in /home/alejandro 3 of which are deleted.
+	An image of the celebrity was found at: /home/stefani/vintage_nyu_performance.mp4
+An assumed schedule to view the celebrity was found in /home/stefani/sched.txt.
+
+
+Did the suspect move or try to delete any files before his arrest? Please list the name(s) of the file(s) and any indications of their contents that you can find.
+
+	Deleted images a15.jpg,a16.jpg,a17.jpg from the /home/alejandro directory.
+	This was further validated by examining the bash_history file in /home/alejandro.
+
+
+Did the suspect save pictures of the celebrity? If so, how many pictures of the celebrity did you find? (including any deleted images)
+	
+17 images of the celebrity were found in the /home/alejandro directory when including deleted files.
+
+Are there any encrypted files? If so, list the contents in the encrypted file and provide a brief description of how you decrypted the file.
+
+
+	There is an encrypted zip file called lockbox.txt. After changing the extension to zip it was decrypted by guessing the password using context clues. In this case the password was gaga. Upon decrypting the zip a file edge.mp4 was found which was a video of Lady Gaga on Howard Stern.
+
+
+Do the suspect want to go see this celebrity? If so, note the date(s) and location(s) where the suspect want see to the celebrity.
+
+	The suspect wanted to see this celebrity at the times and locations listed below.
+12/31/2014: The Chelsea at the Cosmopolitan of Las Vegas Las Vegas, NV 9:00 p.m. PST
+2/8/2015: Wiltern Theatre, Los Angeles, CA, 9:30 p.m. PST
+5/30/2015: Hollywood Bowl, Hollywood, CA, 7:30 p.m. PDT
+This schedule was found in /home/stefani/sched.txt.
+
+
+Who is the celebrity that the suspect has been stalking?
+
+	Lady Gaga
